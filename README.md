@@ -61,7 +61,10 @@ conda activate wenet
 pip install -r requirements.txt
 pre-commit install  # for clean and tidy code
 ```
-
+- Run sample recipe
+``` sh
+cd examples/vinbrain/s0
+```
 **Build for deployment**
 
 Optionally, if you want to use x86 runtime or language model(LM),
