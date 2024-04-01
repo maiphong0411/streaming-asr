@@ -1,0 +1,11 @@
+examples/aishell/
+examples/aishell2/
+examples/librispeech/
+examples/foo/
+examples/vinbrain/s0/data/
+examples/vinbrain/s0/data_raw/
+examples/vinbrain/s0/tensorboard/
+.ipynb_checkpoints/
+examples/aishell4/
+examples/vinbrain/s0/exp/
+**/__pycache__/
