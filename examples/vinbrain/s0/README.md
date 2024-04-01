@@ -4,9 +4,6 @@ First of all, please refer to README.md in root folder and make sure that all of
 ## Step 1: Convert data csv to kaldi format
 Actually, I wrote a custom recipe for training, in this stage you only need ```csv``` files with 2 columns (```wav``` is path of audio, ```wrd``` is label)
 
-``` bash
-cd examples/vinbrain/s0
-```
 ``` sh
 bash run.sh --stage 1 --stop_stage 1
 ```
