@@ -75,7 +75,17 @@ you have to build the runtime as follows. Otherwise, you can just ignore this st
 cd runtime/libtorch
 mkdir build && cd build && cmake -DGRAPH_TOOLS=ON .. && cmake --build .
 ```
+**Build websocket**
+I have already prepared 2 scripts to run client-server.
+Start server:
+``` sh
+./runtime/libtorch/build/bin/run_server.sh
+```
+Start client:
+``` sh
+./runtime/libtorch/build/bin/run_client.sh
+```
+Edit ```wav_path``` variable in run_client.sh if you try to test your audio.
 
 Please see [doc](https://github.com/wenet-e2e/wenet/tree/main/runtime) for building
 runtime on more platforms and OS.
-
