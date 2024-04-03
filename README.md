@@ -82,11 +82,38 @@ Start server:
 ``` sh
 ./runtime/libtorch/build/bin/run_server.sh
 ```
+
+``` bash 
+export GLOG_logtostderr=1
+export GLOG_v=2
+model_dir=/examples/foo/s0/exp/sp_spec_aug
+TLG_path=/examples/foo/s0/data/lang_test/TLG.fst
+words_path=/examples/foo/s0/data/lang_test/words.txt
+./websocket_server_main \
+    --port 10086 \
+    --chunk_size 8 \
+    --model_path $model_dir/final.zip \
+    --unit_path $model_dir/units.txt 2>&1 | tee server.log \
+    --fst_path $TLG_path \
+    --dict_path $words_path
+
+```
+
 Start client:
 ``` sh
 ./runtime/libtorch/build/bin/run_client.sh
 ```
-Edit ```wav_path``` variable in run_client.sh if you try to test your audio.
+
+``` bash
+export GLOG_logtostderr=1
+export GLOG_v=2
+wav_path=/zalo/program-0132/program-0132-00693.wav
+./websocket_client_main \
+    --hostname 127.0.0.1 --port 10086 \
+    --wav_path $wav_path 2>&1 | tee client.log
+```
+
+Edit ```wav_path``` variable in run_client.sh if you try to test your own audio.
 
 Please see [doc](https://github.com/wenet-e2e/wenet/tree/main/runtime) for building
 runtime on more platforms and OS.
