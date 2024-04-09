@@ -290,10 +290,65 @@ class Model:
                 })
             result['tokens'] = tokens_info
         return result
+    
+    @torch.no_grad()
+    def decode(self, waveform, sample_rate=16000, label=None):
+        waveform = torch.from_numpy(waveform).to(torch.float)
+        waveform = waveform.unsqueeze(dim=0)
+        print(waveform.size())
+        if sample_rate != self.resample_rate:
+            waveform = torchaudio.transforms.Resample(
+                orig_freq=sample_rate, new_freq=self.resample_rate)(waveform)
+        waveform = waveform.to(self.device)
+        feats = kaldi.fbank(waveform,
+                            num_mel_bins=80,
+                            frame_length=self.frame_length,
+                            frame_shift=self.frame_shift,
+                            energy_floor=0.0,
+                            sample_frequency=self.resample_rate)
+        feats = feats.unsqueeze(0)
+        
+        encoder_out, _, _ = self.model.forward_encoder_chunk(feats, 0, -1) # xs, offset, cache_size 
+        encoder_lens = torch.tensor([encoder_out.size(1)],
+                                    dtype=torch.long,
+                                    device=encoder_out.device)
 
+        ctc_probs = self.model.ctc_activation(encoder_out)
+
+        if label is None:
+            ctc_prefix_results = ctc_prefix_beam_search(
+                ctc_probs,
+                encoder_lens,
+                self.beam,
+                context_graph=self.context_graph)
+        else:  # force align mode, construct ctc prefix result from alignment
+            label_t = self.tokenize(label)
+            alignment = force_align(ctc_probs.squeeze(0),
+                                    torch.tensor(label_t, dtype=torch.long))
+            peaks = gen_ctc_peak_time(alignment)
+            ctc_prefix_results = [
+                DecodeResult(tokens=label_t,
+                             score=0.0,
+                             times=peaks,
+                             nbest=[label_t],
+                             nbest_scores=[0.0],
+                             nbest_times=[peaks])
+            ]
+        rescoring_results = attention_rescoring(self.model, ctc_prefix_results,
+                                                encoder_out, encoder_lens, 0.3,
+                                                0.5)
+        res = rescoring_results[0]
+        result = {}
+        result['text'] = ''.join([self.char_dict[x] for x in res.tokens])
+        result['confidence'] = res.confidence
+        
+        return result
+        
+        
+        
     def transcribe(self, 
                    audio_file: str, 
-                   chunk_size: int,
+                   chunk_size: int = 8,
                    tokens_info: bool = False, 
                    simulate_stream: bool = False) -> dict:
         if simulate_stream:
