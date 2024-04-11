@@ -293,13 +293,14 @@ class Model:
     
     @torch.no_grad()
     def decode(self, waveform, sample_rate=16000, label=None):
-        waveform = torch.from_numpy(waveform).to(torch.float)
-        waveform = waveform.unsqueeze(dim=0)
-        print(waveform.size())
+        # waveform = torch.from_numpy(waveform).to(torch.float)
+        # waveform = waveform.unsqueeze(dim=0)
+        # print(waveform.size())
         if sample_rate != self.resample_rate:
             waveform = torchaudio.transforms.Resample(
                 orig_freq=sample_rate, new_freq=self.resample_rate)(waveform)
         waveform = waveform.to(self.device)
+        print(waveform.size())
         feats = kaldi.fbank(waveform,
                             num_mel_bins=80,
                             frame_length=self.frame_length,
