@@ -293,6 +293,7 @@ class Model:
     
     @torch.no_grad()
     def decode(self, waveform, sample_rate=16000, label=None):
+        waveform = waveform.to(torch.float)
         # waveform = torch.from_numpy(waveform).to(torch.float)
         # waveform = waveform.unsqueeze(dim=0)
         # print(waveform.size())
