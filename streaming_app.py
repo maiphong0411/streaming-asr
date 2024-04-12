@@ -36,8 +36,9 @@ def audiorec_demo_app():
         print(audio_len)
         audio = torch.randint(-32768, 32768, size=(1,audio_len.item()), dtype=torch.int16)
     #     print(audio.shape)
+        audio = audio.to(torch.float)
         ans = model.decode(audio)
-        print(ans)
+        # print(ans)
         print("Processed the {}-th audio.".format(i + 1))
 
     # TITLE and Creator information
