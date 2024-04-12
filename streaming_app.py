@@ -2,8 +2,8 @@
 
 import streamlit as st
 from st_audiorec import st_audiorec
-from pydub import AudioSegment
-import pydub
+# from pydub import AudioSegment
+# import pydub
 import numpy as np
 import wenet
 import soundfile as sf
