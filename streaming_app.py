@@ -34,7 +34,7 @@ def audiorec_demo_app():
     for i in range(10):
         audio_len = torch.randint(16000 * 3, 16000 * 10, (1,))  # 3~10s
         print(audio_len)
-        audio = torch.randint(-32768, 32768, size=(1,audio_len.item()), dtype=torch.float32)
+        audio = torch.randint(-32768, 32768, size=(1,audio_len.item()), dtype=torch.int16)
     #     print(audio.shape)
         ans = model.decode(audio)
         print(ans)
@@ -56,7 +56,7 @@ def audiorec_demo_app():
     wav_audio_data = st_audiorec() # bytes string
     print(type(wav_audio_data))
 
-    audio_data, sample_rate = torchaudio.load(io.BytesIO(wav_audio_data))
+    audio_data, sample_rate = torchaudio.load(io.BytesIO(wav_audio_data), normalize=False)
     waveform = torch.sum(audio_data, dim=0)
     print(f"sample rate {sample_rate}")
 
