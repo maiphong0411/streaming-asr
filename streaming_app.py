@@ -2,6 +2,8 @@
 
 import streamlit as st
 from st_audiorec import st_audiorec
+# from pydub import AudioSegment
+# import pydub
 import numpy as np
 import wenet
 import soundfile as sf
@@ -32,10 +34,11 @@ def audiorec_demo_app():
     for i in range(10):
         audio_len = torch.randint(16000 * 3, 16000 * 10, (1,))  # 3~10s
         print(audio_len)
-        audio = torch.randint(-32768, 32768, size=(1,audio_len.item()), dtype=torch.float32)
+        audio = torch.randint(-32768, 32768, size=(1,audio_len.item()), dtype=torch.int16)
     #     print(audio.shape)
+        audio = audio.to(torch.float)
         ans = model.decode(audio)
-        print(ans)
+        # print(ans)
         print("Processed the {}-th audio.".format(i + 1))
 
     # TITLE and Creator information

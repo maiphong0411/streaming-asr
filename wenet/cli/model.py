@@ -291,8 +291,14 @@ class Model:
             result['tokens'] = tokens_info
         return result
     
+<<<<<<< HEAD
     # @torch.no_grad()
     def decode(self, waveform, sample_rate=44100, label=None):
+=======
+    @torch.no_grad()
+    def decode(self, waveform, sample_rate=16000, label=None):
+        waveform = waveform.to(torch.float)
+>>>>>>> 62599ac884793c599a737d967fb9f8328c10289e
         # waveform = torch.from_numpy(waveform).to(torch.float)
         # waveform = waveform.unsqueeze(dim=0)
         # print(waveform.size())
