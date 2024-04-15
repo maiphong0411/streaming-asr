@@ -291,8 +291,8 @@ class Model:
             result['tokens'] = tokens_info
         return result
     
-    @torch.no_grad()
-    def decode(self, waveform, sample_rate=16000, label=None):
+    # @torch.no_grad()
+    def decode(self, waveform, sample_rate=44100, label=None):
         # waveform = torch.from_numpy(waveform).to(torch.float)
         # waveform = waveform.unsqueeze(dim=0)
         # print(waveform.size())
@@ -308,7 +308,7 @@ class Model:
                             energy_floor=0.0,
                             sample_frequency=self.resample_rate)
         feats = feats.unsqueeze(0)
-        
+        self.model.eval()
         encoder_out, _, _ = self.model.forward_encoder_chunk(feats, 0, -1) # xs, offset, cache_size 
         encoder_lens = torch.tensor([encoder_out.size(1)],
                                     dtype=torch.long,

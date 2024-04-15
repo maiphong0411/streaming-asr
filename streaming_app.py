@@ -2,8 +2,6 @@
 
 import streamlit as st
 from st_audiorec import st_audiorec
-from pydub import AudioSegment
-import pydub
 import numpy as np
 import wenet
 import soundfile as sf
@@ -56,12 +54,13 @@ def audiorec_demo_app():
     wav_audio_data = st_audiorec() # bytes string
     print(type(wav_audio_data))
 
-    audio_data, sample_rate = torchaudio.load(io.BytesIO(wav_audio_data))
+    audio_data, sample_rate = torchaudio.load(io.BytesIO(wav_audio_data), normalize=False)
     waveform = torch.sum(audio_data, dim=0)
     print(f"sample rate {sample_rate}")
 
     waveform = torch.unsqueeze(waveform, dim=0)
-    print(waveform.size())
+    print(waveform.size()) # [1, sample]
+    # torch.save(waveform, 'waveform.pt')
     result = model.decode(waveform, sample_rate=sample_rate)
     print(result)
     # add some spacing and informative messages
