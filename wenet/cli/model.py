@@ -292,7 +292,8 @@ class Model:
         return result
     
     @torch.no_grad()
-    def decode(self, waveform, sample_rate=16000, label=None):
+    def decode(self, waveform, att_cache=torch.zeros((0, 0, 0, 0)),
+        cnn_cache=torch.zeros((0, 0, 0, 0)), offset=0, sample_rate=16000, label=None):
         if type(waveform) == np.ndarray:
             waveform = torch.from_numpy(waveform)
         waveform = waveform.to(torch.float)
@@ -312,7 +313,8 @@ class Model:
                             sample_frequency=self.resample_rate)
         feats = feats.unsqueeze(0)
         self.model.eval()
-        encoder_out, _, _ = self.model.forward_encoder_chunk(feats, 0, -1) # xs, offset, cache_size 
+        encoder_out, att_cache, cnn_cache = self.model.forward_encoder_chunk(feats, offset, -1, att_cache, cnn_cache) # xs, offset, cache_size 
+        offset += encoder_out.size(1)
         encoder_lens = torch.tensor([encoder_out.size(1)],
                                     dtype=torch.long,
                                     device=encoder_out.device)
@@ -346,7 +348,7 @@ class Model:
         result['text'] = ''.join([self.char_dict[x] for x in res.tokens])
         result['confidence'] = res.confidence
         
-        return result
+        return result, att_cache, cnn_cache, offset
         
         
         
